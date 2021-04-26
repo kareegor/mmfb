@@ -82,4 +82,18 @@ services:
         traefik.http.routers.frontend1.tls.certresolver: le
         traefik.http.routers.frontend1.middlewares: frontend1@docker  
       ports:
-        - 8480:8480  
+        - 8480:8480
+  frontend2:
+      image: frontend2:latest
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.frontend2.rule: Host(`mmfb.com`) && PathPrefix(`/app2`)  
+        traefik.http.routers.frontend2.entrypoints: websecure
+        traefik.http.middlewares.frontend2.headers.framedeny: "false"
+        traefik.http.middlewares.frontend2.headers.sslredirect: "true"
+        traefik.http.middlewares.frontend2.headers.contentsecuritypolicy: upgrade-insecure-requests
+        traefik.http.middlewares.frontend2.headers.sslproxyheaders.x-forwarded-proto: https  
+        traefik.http.routers.frontend2.tls.certresolver: le
+        traefik.http.routers.frontend2.middlewares: frontend2@docker  
+      ports:
+        - 8580:8580  

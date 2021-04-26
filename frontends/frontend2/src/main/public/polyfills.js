@@ -7,7 +7,7 @@
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(/*! /home/aslam/git/mmfb/frontends/frontend1/src/main/webapp/src/polyfills.ts */"hN/g");
+module.exports = __webpack_require__(/*! /home/aslam/git/mmfb/frontends/frontend2/src/main/webapp/src/polyfills.ts */"hN/g");
 
 
 /***/ }),
