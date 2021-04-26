@@ -59,12 +59,27 @@ services:
         traefik.enable: "true"
         traefik.http.routers.auth.rule: Host(`mmfb.com`) && PathPrefix(`/auth`)  
         traefik.http.routers.auth.entrypoints: websecure
-        traefik.http.middlewares.a.headers.framedeny: "false"
-        traefik.http.middlewares.a.headers.sslredirect: "true"
-        traefik.http.middlewares.a.headers.contentsecuritypolicy: upgrade-insecure-requests
+        traefik.http.middlewares.authheader.headers.framedeny: "false"
+        traefik.http.middlewares.authheader.headers.sslredirect: "true"
+        traefik.http.middlewares.authheader.headers.contentsecuritypolicy: upgrade-insecure-requests
         traefik.http.middlewares.authheader.headers.sslproxyheaders.x-forwarded-proto: https  
         traefik.http.routers.auth.tls.certresolver: le
+        traefik.http.routers.auth.middlewares: authheader@docker   
       ports:
         - 8080:8080
       depends_on:
         - postgres    
+  frontend1:
+      image: frontend1:latest
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.frontend1.rule: Host(`mmfb.com`) && PathPrefix(`/app1`)  
+        traefik.http.routers.frontend1.entrypoints: websecure
+        traefik.http.middlewares.frontend1.headers.framedeny: "false"
+        traefik.http.middlewares.frontend1.headers.sslredirect: "true"
+        traefik.http.middlewares.frontend1.headers.contentsecuritypolicy: upgrade-insecure-requests
+        traefik.http.middlewares.frontend1.headers.sslproxyheaders.x-forwarded-proto: https  
+        traefik.http.routers.frontend1.tls.certresolver: le
+        traefik.http.routers.frontend1.middlewares: frontend1@docker  
+      ports:
+        - 8480:8480  
