@@ -175,3 +175,4 @@ systemqc-api/node/
 systemqc-api/node_modules/
 systemqc-api/node_temp/
 systemqc-api/target/
+edge/letsencrypt/acme.json
