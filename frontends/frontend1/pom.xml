@@ -21,6 +21,7 @@
 		<maven-war-plugin.version>3.2.3</maven-war-plugin.version>
 		<mapstruct.version>1.3.1.Final</mapstruct.version>
 		<maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
+		<exposed.ports>8480</exposed.ports>
 	</properties>
 	<dependencies>
 		<dependency>

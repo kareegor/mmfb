@@ -21,6 +21,10 @@
 		<maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
 		<maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
 	</properties>
+	<modules>
+		<module>frontend1</module>
+		<module>frontend2</module>
+	</modules>
 	<build>
 		<pluginManagement>
 			<plugins>
@@ -139,7 +143,7 @@
 							<image>adoptopenjdk:11-jre-hotspot</image>
 						</from>
 						<to>
-							<image>frontend1:latest</image>
+							<image>${project.artifactId}:latest</image>
 						</to>
 						<container>
 							<entrypoint>
@@ -148,7 +152,7 @@
 								<arg>/entrypoint.sh</arg>
 							</entrypoint>
 							<ports>
-								<port>8480</port>
+								<port>${exposed.ports}</port>
 							</ports>
 							<environment>
 								<SPRING_OUTPUT_ANSI_ENABLED>ALWAYS</SPRING_OUTPUT_ANSI_ENABLED>
