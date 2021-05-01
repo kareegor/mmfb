@@ -53,8 +53,14 @@ services:
         DB_PASSWORD: password
         KEYCLOAK_USER: admin
         KEYCLOAK_PASSWORD: Pa55w0rd
+        PROXY_ADDRESS_FORWARDING: "true"
         # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
         #JDBC_PARAMS: "ssl=true"
+      command:
+       - "-b 0.0.0.0"
+       - "-Dkeycloak.profile.feature.upload_scripts=enabled -Dkeycloak.profile.feature.docker=enabled"
+       #- "-Dkeycloak.migration.action=import -Dkeycloak.migration.provider=dir -Dkeycloak.migration.dir=/opt/jboss/keycloak/import-dir -Dkeycloak.migration.strategy=OVERWRITE_EXISTING"
+      
       labels:
         traefik.enable: "true"
         traefik.http.routers.auth.rule: Host(`mmfb.com`) && PathPrefix(`/auth`)  

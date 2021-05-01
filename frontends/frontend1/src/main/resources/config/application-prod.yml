@@ -1,0 +1,17 @@
+server:
+  port: 8480
+spring:  
+  profiles:
+    active: prod
+  security:
+    oauth2:
+      client:
+        provider:
+          oidc:
+            jwk-set-uri: http://www.qclocal.com/auth/realms/etsaf/protocol/openid-connect/certs
+            issuer-uri: http://www.qclocal.com/auth/realms/etsaf
+        registration:
+          oidc:
+            redirect-uri: "http://www.qclocal.com/app/login/oauth2/code/{registrationId}"
+            client-id: apiclient
+            client-secret: web_app

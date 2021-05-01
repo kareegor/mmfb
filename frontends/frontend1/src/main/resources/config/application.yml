@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: frontend1
+    
+server:
+  servlet:
+    context-path: /app1      
