@@ -22,10 +22,10 @@ services:
       - "--entryPoints.web.forwardedHeaders.trustedIPs=127.0.0.1/32"
       - "--entrypoints.web.http.redirections.entryPoint.to=websecure"
       - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
-      - "--entrypoints.web.http.redirections.entrypoint.permanent=true"
+      - "--entrypoints.web.http.redirections.entrypoint.permanent=true"      
       - "--certificatesresolvers.le.acme.tlschallenge=true"
-            #- "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
-      - "--certificatesresolvers.le.acme.email=postmaster@mmfb.com"
+      #- "--certificatesresolvers.le.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - "--certificatesresolvers.le.acme.email=postmaster@www.mmfb.com"
       - "--certificatesresolvers.le.acme.storage=/letsencrypt/acme.json"
     ports:
       - "443:443"
@@ -33,7 +33,7 @@ services:
       - "28080:8080"
     volumes:
       - "./letsencrypt:/letsencrypt"
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro" 
   postgres:
       image: postgres
       volumes:
@@ -63,43 +63,17 @@ services:
       
       labels:
         traefik.enable: "true"
-        traefik.http.routers.auth.rule: Host(`mmfb.com`) && PathPrefix(`/auth`)  
+        traefik.http.routers.auth.rule: Host(`www.mmfb.com`) && PathPrefix(`/auth`)  
         traefik.http.routers.auth.entrypoints: websecure
-        traefik.http.middlewares.authheader.headers.framedeny: "false"
-        traefik.http.middlewares.authheader.headers.sslredirect: "true"
-        traefik.http.middlewares.authheader.headers.contentsecuritypolicy: upgrade-insecure-requests
-        traefik.http.middlewares.authheader.headers.sslproxyheaders.x-forwarded-proto: https  
+        traefik.http.middlewares.auth.headers.framedeny: "false"
+        traefik.http.middlewares.auth.headers.sslredirect: "true"
+        traefik.http.middlewares.auth.headers.contentsecuritypolicy: upgrade-insecure-requests
+        traefik.http.middlewares.auth.headers.sslproxyheaders.x-forwarded-proto: https  
+        traefik.http.routers.auth.tls: "true"
         traefik.http.routers.auth.tls.certresolver: le
-        traefik.http.routers.auth.middlewares: authheader@docker   
+        traefik.http.routers.auth.middlewares: auth@docker   
       ports:
         - 8080:8080
       depends_on:
-        - postgres    
-  frontend1:
-      image: frontend1:latest
-      labels:
-        traefik.enable: "true"
-        traefik.http.routers.frontend1.rule: Host(`mmfb.com`) && PathPrefix(`/app1`)  
-        traefik.http.routers.frontend1.entrypoints: websecure
-        traefik.http.middlewares.frontend1.headers.framedeny: "false"
-        traefik.http.middlewares.frontend1.headers.sslredirect: "true"
-        traefik.http.middlewares.frontend1.headers.contentsecuritypolicy: upgrade-insecure-requests
-        traefik.http.middlewares.frontend1.headers.sslproxyheaders.x-forwarded-proto: https  
-        traefik.http.routers.frontend1.tls.certresolver: le
-        traefik.http.routers.frontend1.middlewares: frontend1@docker  
-      ports:
-        - 8480:8480
-  frontend2:
-      image: frontend2:latest
-      labels:
-        traefik.enable: "true"
-        traefik.http.routers.frontend2.rule: Host(`mmfb.com`) && PathPrefix(`/app2`)  
-        traefik.http.routers.frontend2.entrypoints: websecure
-        traefik.http.middlewares.frontend2.headers.framedeny: "false"
-        traefik.http.middlewares.frontend2.headers.sslredirect: "true"
-        traefik.http.middlewares.frontend2.headers.contentsecuritypolicy: upgrade-insecure-requests
-        traefik.http.middlewares.frontend2.headers.sslproxyheaders.x-forwarded-proto: https  
-        traefik.http.routers.frontend2.tls.certresolver: le
-        traefik.http.routers.frontend2.middlewares: frontend2@docker  
-      ports:
-        - 8580:8580  
+        - traefik
+        - postgres   

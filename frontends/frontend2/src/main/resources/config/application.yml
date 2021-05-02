@@ -1,9 +1,9 @@
 spring:
   application:
-    name: frontend1
+    name: frontend2
   profiles:
     active: #spring.profiles.active#
 server:
-  port: 8480
+  port: 8580
   servlet:
-    context-path: /app1      
+    context-path: /app2      

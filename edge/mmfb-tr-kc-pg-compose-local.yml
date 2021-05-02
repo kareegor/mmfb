@@ -1,0 +1,68 @@
+version: "3.3"
+
+volumes:
+  postgres_data:
+      driver: local
+services:
+  traefik:
+    image: "traefik:v2.4"
+    container_name: "traefik"
+    labels:
+      # For more information, see: https://docs.traefik.io/providers/docker/#exposedbydefault
+      traefik.enable: "true"
+      # Use "traefik" router configuration defined into the dynamic config file: ./traefik/config.yml
+      traefik.http.routers.traefik: true"
+    ports:
+      - "443:443"
+      - "80:80"
+      - "28080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      # Map the static conf into the container
+      - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+      # Map the dynamic conf into the container
+      - ./traefik/config.yml:/etc/traefik/config.yml:ro
+      # Map the certificats into the container
+      - ./certs:/etc/certs:ro
+  postgres:
+      image: postgres
+      volumes:
+        - postgres_data:/var/lib/postgresql/data
+      environment:
+        POSTGRES_DB: keycloak
+        POSTGRES_USER: keycloak
+        POSTGRES_PASSWORD: password
+  keycloak:
+      image: quay.io/keycloak/keycloak:latest
+      environment:
+        DB_VENDOR: POSTGRES
+        DB_ADDR: postgres
+        DB_DATABASE: keycloak
+        DB_USER: keycloak
+        DB_SCHEMA: public
+        DB_PASSWORD: password
+        KEYCLOAK_USER: admin
+        KEYCLOAK_PASSWORD: Pa55w0rd
+        PROXY_ADDRESS_FORWARDING: "true"
+        # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
+        #JDBC_PARAMS: "ssl=true"
+      command:
+       - "-b 0.0.0.0"
+       - "-Dkeycloak.profile.feature.upload_scripts=enabled -Dkeycloak.profile.feature.docker=enabled"
+       #- "-Dkeycloak.migration.action=import -Dkeycloak.migration.provider=dir -Dkeycloak.migration.dir=/opt/jboss/keycloak/import-dir -Dkeycloak.migration.strategy=OVERWRITE_EXISTING"
+      
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.auth.rule: Host(`www.mmfb.com`) && PathPrefix(`/auth`)  
+        traefik.http.middlewares.auth.headers.framedeny: "false"
+        traefik.http.middlewares.auth.headers.sslredirect: "true"
+        traefik.http.middlewares.auth.headers.contentsecuritypolicy: upgrade-insecure-requests
+        traefik.http.middlewares.auth.headers.sslproxyheaders.x-forwarded-proto: https  
+        traefik.http.routers.auth.tls: "true"
+        traefik.http.routers.auth.middlewares: auth@docker   
+      ports:
+        - 8080:8080
+      depends_on:
+        - traefik
+        - postgres   
+        

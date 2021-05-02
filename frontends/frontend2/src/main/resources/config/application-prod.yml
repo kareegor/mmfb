@@ -1,11 +1,11 @@
 server:
-  port: 8480
+  port: 8580
 spring:  
   security:
     oauth2:
       client:
         provider:
-          oidc:
+         oidc:
             jwk-set-uri: https://www.mmfb.com/auth/realms/mmfb/protocol/openid-connect/certs
             issuer-uri: https://www.mmfb.com/auth/realms/mmfb
         registration:

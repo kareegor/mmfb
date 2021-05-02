@@ -1,4 +1,4 @@
-package com.kareegar.mmfb.frontend1.conf;
+package com.kareegar.mmfb.frontend2.conf;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -11,8 +11,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    @Override
-    public void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().anyRequest().authenticated().and().oauth2Login();
-    }
+	@Override
+	public void configure(HttpSecurity http) throws Exception {
+		http.authorizeRequests().anyRequest().authenticated().and().oauth2Login();
+	}
 }

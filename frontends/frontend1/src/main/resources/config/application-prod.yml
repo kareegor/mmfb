@@ -1,17 +1,15 @@
 server:
   port: 8480
 spring:  
-  profiles:
-    active: prod
   security:
     oauth2:
       client:
         provider:
           oidc:
-            jwk-set-uri: http://www.qclocal.com/auth/realms/etsaf/protocol/openid-connect/certs
-            issuer-uri: http://www.qclocal.com/auth/realms/etsaf
+            jwk-set-uri: http://mmfb.com/auth/realms/mmfb/protocol/openid-connect/certs
+            issuer-uri: http://mmfb.com/auth/realms/mmfb
         registration:
           oidc:
-            redirect-uri: "http://www.qclocal.com/app/login/oauth2/code/{registrationId}"
+            redirect-uri: "http://mmfb.com/app1/login/oauth2/code/{registrationId}"
             client-id: apiclient
             client-secret: web_app

@@ -45,46 +45,22 @@
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-devtools</artifactId>
+				<version>${spring-boot.version}</version>
+				<scope>runtime</scope>
+				<optional>true</optional>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-starter-oauth2-client</artifactId>
-				<version>${spring-boot.version}</version>
-			  </dependency>
-			  <dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
-				<version>${spring-boot.version}</version>
-			  </dependency>
-			  <dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-starter-security</artifactId>
 				<version>${spring-boot.version}</version>
 			  </dependency>
 		</dependencies>
 	</dependencyManagement>
 
 	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-			</plugin>
-		</plugins>
 		<pluginManagement>
 			<plugins>
-				<plugin>
-					<artifactId>maven-antrun-plugin</artifactId>
-					<executions>
-						<execution>
-							<phase>compile</phase>
-							<goals>
-								<goal>run</goal>
-							</goals>
-							<configuration>
-								<tasks>
-									<echo>MAVEN EXECUTING PROFILE ${spring.profiles.active}</echo>
-								</tasks>
-							</configuration>
-						</execution>
-					</executions>
-				</plugin>
 				<plugin>
 					<artifactId>maven-clean-plugin</artifactId>
 					<configuration>
@@ -119,13 +95,6 @@
 										<includes>
 											<include>config/*.yml</include>
 										</includes>
-									</resource>
-									<resource>
-										<directory>src/main/resources/</directory>
-										<filtering>false</filtering>
-										<excludes>
-											<exclude>config/*.yml</exclude>
-										</excludes>
 									</resource>
 								</resources>
 							</configuration>

@@ -1,5 +1,5 @@
 server:
-  port: 8480
+  port: 8580
 spring:  
   security:
     oauth2:
@@ -10,6 +10,6 @@ spring:
             issuer-uri: https://www.mmfb.com/auth/realms/mmfb
         registration:
           oidc:
-            redirect-uri: "https://www.mmfb.com/app1/login/oauth2/code/{registrationId}"
+            redirect-uri: "https://www.mmfb.com/app2/login/oauth2/code/{registrationId}"
             client-id: apiclient
             client-secret: web_app
