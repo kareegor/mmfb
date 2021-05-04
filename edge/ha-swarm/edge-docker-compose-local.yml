@@ -1,0 +1,127 @@
+version: '3.3'
+
+services:
+  traefik:
+    image: "traefik:v2.4"
+    ports:
+      - 80:80
+      - 443:443
+    deploy:
+      replicas: 3
+      placement:
+        constraints:
+            - node.role == manager
+        preferences:
+          - spread: node.id
+      labels:
+     # Enable Traefik for this service, to make it available in the public network
+        - traefik.enable=true
+        # Use the traefik-public network (declared below)
+        - traefik.docker.network=traefik-public
+        # Use the custom label "traefik.constraint-label=traefik-public"
+        # This public Traefik will only use services with this label
+        # That way you can add other internal Traefik instances per stack if needed
+        - traefik.constraint-label=traefik-public
+        # admin-auth middleware with HTTP Basic auth
+        # Using the environment variables USERNAME and HASHED_PASSWORD
+        - traefik.http.middlewares.admin-auth.basicauth.users=admin:${HASHED_PASSWORD?Variable not set}
+        # https-redirect middleware to redirect HTTP to HTTPS
+        # It can be re-used by other stacks in other Docker Compose files
+        - traefik.http.middlewares.https-redirect.redirectscheme.scheme=https
+        - traefik.http.middlewares.https-redirect.redirectscheme.permanent=true
+        # traefik-http set up only to use the middleware to redirect to https
+        # Uses the environment variable DOMAIN
+        - traefik.http.routers.traefik-public-http.rule=Host(`traefik.mmfb.com`)
+        - traefik.http.routers.traefik-public-http.entrypoints=http
+        - traefik.http.routers.traefik-public-http.middlewares=https-redirect
+        # traefik-https the actual router using HTTPS
+        # Uses the environment variable DOMAIN
+        - traefik.http.routers.traefik-public-https.rule=Host(`traefik.mmfb.com`)
+        - traefik.http.routers.traefik-public-https.entrypoints=https
+        - traefik.http.routers.traefik-public-https.tls=true
+        # Use the special Traefik service api@internal with the web UI/Dashboard
+        - traefik.http.routers.traefik-public-https.service=api@internal
+        # Use the "le" (Let's Encrypt) resolver created below
+        # - traefik.http.routers.traefik-public-https.tls.certresolver=le
+        # Enable HTTP Basic auth, using the middleware created above
+        - traefik.http.routers.traefik-public-https.middlewares=admin-auth
+        # Define the port inside of the Docker service to use
+        - traefik.http.services.traefik-public.loadbalancer.server.port=8080
+        
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ../traefik/config.yml:/etc/traefik/config.yml:ro
+      - ../traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ../certs:/etc/certs:ro
+    networks:
+      - default
+      - traefik-public
+    depends_on:
+      - consul-leader
+  postgres:
+      image: postgres
+      volumes:
+        - postgres_data:/var/lib/postgresql/data
+      environment:
+        POSTGRES_DB: keycloak
+        POSTGRES_USER: keycloak
+        POSTGRES_PASSWORD: password
+      networks:
+       - default
+       - traefik-public  
+  keycloak:
+      image: quay.io/keycloak/keycloak:latest
+      environment:
+        DB_VENDOR: POSTGRES
+        DB_ADDR: postgres
+        DB_DATABASE: keycloak
+        DB_USER: keycloak
+        DB_SCHEMA: public
+        DB_PASSWORD: password
+        KEYCLOAK_USER: admin
+        KEYCLOAK_PASSWORD: Pa55w0rd
+        PROXY_ADDRESS_FORWARDING: "true"
+        KEYCLOAK_FRONTEND_URL: https://www.mmfb.com/auth
+        # CACHE_OWNERS_AUTH_SESSIONS_COUNT: 2
+        # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
+        #JDBC_PARAMS: "ssl=true"
+      command:
+       - "-b 0.0.0.0"
+       - "-Dkeycloak.profile.feature.upload_scripts=enabled -Dkeycloak.profile.feature.docker=enabled"
+       #- "-Dkeycloak.migration.action=import -Dkeycloak.migration.provider=dir -Dkeycloak.migration.dir=/opt/jboss/keycloak/import-dir -Dkeycloak.migration.strategy=OVERWRITE_EXISTING"
+      deploy:
+       mode: replicated
+       replicas: 1
+       restart_policy:
+        condition: on-failure
+        max_attempts: 3
+        window: 120s
+       update_config:
+        parallelism: 1
+        failure_action: rollback
+       labels:
+          traefik.enable: "true"
+          traefik.constraint-label: traefik-public
+          traefik.docker.network: traefik-public
+          traefik.http.routers.auth.rule: Host(`www.mmfb.com`) && PathPrefix(`/auth`)  
+          traefik.http.middlewares.auth.headers.framedeny: "false"
+          traefik.http.middlewares.auth.headers.sslredirect: "true"
+          traefik.http.middlewares.auth.headers.contentsecuritypolicy: upgrade-insecure-requests
+          traefik.http.middlewares.auth.headers.sslproxyheaders.x-forwarded-proto: https  
+          traefik.http.routers.auth.tls: "true"
+          traefik.http.routers.auth.middlewares: auth@docker  
+          traefik.http.services.keycloak.loadbalancer.server.port: 8080 
+          traefik.http.services.keycloak.loadbalancer.passhostheader: "true"
+          traefik.http.services.keycloak.loadbalancer.sticky.cookie: "true"
+          traefik.http.services.keycloak.loadbalancer.sticky.cookie.name: "keycloak"
+      depends_on:
+        - postgres   
+      networks:
+        - traefik-public  
+volumes:
+  postgres_data:
+      driver: local
+
+networks:
+  traefik-public:
+    external: true

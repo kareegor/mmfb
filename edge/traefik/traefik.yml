@@ -10,11 +10,22 @@ providers:
     endpoint: "unix:///var/run/docker.sock"
     watch: true
     exposedByDefault: false
+    swarmmode: true
 
   file:
     filename: /etc/traefik/config.yml
     watch: true
-
+  
+  # consul:
+  #   endpoints: 
+  #    - "consul-leader:8500"
+  #   rootkey: "traefik"
+  #   tls:
+  #    caOptional: true
+  #    cert: /etc/certs/mmfb-cert.pem
+  #    key: /etc/certs/mmfb-key.pem
+  #    insecureSkipVerify: true
+     
 log:
   level: INFO
   format: common

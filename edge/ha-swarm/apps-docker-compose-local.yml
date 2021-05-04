@@ -1,0 +1,87 @@
+version: "3.3"
+
+services:
+  frontend1:
+      image: frontend1:latest 
+      extra_hosts:
+        - "www.mmfb.com:192.168.0.107" #add hostname to /etc/hosts file of docker
+      environment:
+        SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI: "https://www.mmfb.com/auth/realms/mmfb"
+        SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_JWK_SET_URI: "https://www.mmfb.com/auth/realms/mmfb/protocol/openid-connect/certs"
+        SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_REDIRECT_URI: "https://www.mmfb.com/app1/login/oauth2/code/{registrationId}"
+        SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_ID: "apiclient"
+        SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET: "eadb35dc-3263-488e-9394-49ab39140ced"
+      deploy:
+       mode: replicated
+       replicas: 1
+       restart_policy:
+          condition: on-failure
+          max_attempts: 3
+          window: 120s
+       update_config:
+          parallelism: 1
+          failure_action: rollback
+       labels:
+          traefik.enable: "true"
+          traefik.docker.network: traefik-public
+          traefik.constraint-label: traefik-public
+          traefik.http.routers.frontend1.rule: Host(`www.mmfb.com`) && PathPrefix(`/app1`)  
+          traefik.http.middlewares.frontend1.headers.framedeny: "false"
+          traefik.http.middlewares.frontend1.headers.sslredirect: "true"
+          traefik.http.middlewares.frontend1.headers.contentsecuritypolicy: upgrade-insecure-requests
+          traefik.http.middlewares.frontend1.headers.sslproxyheaders.x-forwarded-proto: https
+          traefik.http.routers.frontend1.tls: "true"    
+          traefik.http.routers.frontend1.middlewares: frontend1@docker 
+          traefik.http.services.frontend1.loadbalancer.server.port: 8480
+          traefik.http.services.frontend1.loadbalancer.passhostheader: "true"
+          traefik.http.services.frontend1.loadbalancer.sticky.cookie: "true"
+          traefik.http.services.frontend1.loadbalancer.sticky.cookie.name: "frontend1"  
+      volumes:
+       # Map the certificats into the container
+       - ../certs:/etc/certs:ro
+      networks:
+        - traefik-public  
+
+  frontend2:
+      image: frontend2:latest
+      extra_hosts:
+        - "www.mmfb.com:192.168.0.107" #add hostname to /etc/hosts file of docker
+      environment:
+        SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI: "https://www.mmfb.com/auth/realms/mmfb"
+        SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_JWK_SET_URI: "https://www.mmfb.com/auth/realms/mmfb/protocol/openid-connect/certs"
+        SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_REDIRECT_URI: "https://www.mmfb.com/app2/login/oauth2/code/{registrationId}"
+        SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_ID: "apiclient"
+        SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET: "eadb35dc-3263-488e-9394-49ab39140ced"
+      deploy:
+       mode: replicated
+       replicas: 1
+       restart_policy:
+          condition: on-failure
+          max_attempts: 3
+          window: 120s
+       update_config:
+          parallelism: 1
+          failure_action: rollback
+       labels:
+          traefik.enable: "true"
+          traefik.docker.network: traefik-public
+          traefik.constraint-label: traefik-public
+          traefik.http.routers.frontend2.rule: Host(`www.mmfb.com`) && PathPrefix(`/app2`)  
+          traefik.http.middlewares.frontend2.headers.framedeny: "false"
+          traefik.http.middlewares.frontend2.headers.sslredirect: "true"
+          traefik.http.middlewares.frontend2.headers.contentsecuritypolicy: upgrade-insecure-requests
+          traefik.http.middlewares.frontend2.headers.sslproxyheaders.x-forwarded-proto: https
+          traefik.http.routers.frontend2.tls: "true"  
+          traefik.http.routers.frontend2.middlewares: frontend2@docker  
+          traefik.http.services.frontend2.loadbalancer.server.port: 8580 
+          traefik.http.services.frontend2.loadbalancer.passhostheader: "true"
+          traefik.http.services.frontend2.loadbalancer.sticky.cookie: "true"
+          traefik.http.services.frontend2.loadbalancer.sticky.cookie.name: "frontend2"
+      volumes:
+       # Map the certificats into the container
+       - ../certs:/etc/certs:ro 
+      networks:
+        - traefik-public   
+networks: 
+  traefik-public:
+      external: true

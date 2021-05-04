@@ -12,7 +12,6 @@ services:
       - "--api.insecure=true"
       - "--providers.docker=true"
       - "--providers.file=true"
-      - "--providers.docker=true"
       - "--providers.file.watch=true"
       - "--providers.docker.exposedbydefault=false"
       - "--entrypoints.web.address=:80"
