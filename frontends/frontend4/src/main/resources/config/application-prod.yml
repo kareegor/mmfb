@@ -1,0 +1,15 @@
+server:
+  port: 8780
+spring:  
+  security:
+    oauth2:
+      client:
+        provider:
+         oidc:
+            jwk-set-uri: https://www.mmfb.com/auth/realms/mmfb/protocol/openid-connect/certs
+            issuer-uri: https://www.mmfb.com/auth/realms/mmfb
+        registration:
+          oidc:
+            redirect-uri: "https://www.mmfb.com/app1/login/oauth2/code/{registrationId}"
+            client-id: apiclient
+            client-secret: web_app

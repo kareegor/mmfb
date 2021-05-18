@@ -24,14 +24,11 @@
 	<modules>
 		<module>frontend1</module>
 		<module>frontend2</module>
+		<module>frontend3</module>
+		<module>frontend4</module>
 	</modules>
 	<dependencyManagement>
 		<dependencies>
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-starter-web</artifactId>
-				<version>${spring-boot.version}</version>
-			</dependency>
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-starter-web</artifactId>
@@ -67,6 +64,9 @@
 						<filesets>
 							<fileset>
 								<directory>target/classes/static/</directory>
+							</fileset>
+							<fileset>
+								<directory>src/main/public/</directory>
 							</fileset>
 						</filesets>
 					</configuration>

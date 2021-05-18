@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: frontend3
+  profiles:
+    active: #spring.profiles.active#
+server:
+  port: 8680
+  servlet:
+    context-path: /app3      

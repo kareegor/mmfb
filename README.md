@@ -12,7 +12,6 @@ mkcert -install
 
 # Generate certificate for domain "mmfb.com" and their sub-domains in ${projecthome}/edge/certs folder
 mkcert -cert-file certs/mmfb-cert.pem -key-file certs/mmfb-key.pem "mmfb.com" "*.mmfb.com"
-mkcert -cert-file certs/consul-cert.pem -key-file certs/consul-key.pem "consul-leader" "consul-replica"
 
 #create java truststore (Look for the rootCA.pem file in - mkcert -CAROOT)
 keytool -import  -trustcacerts  -alias mmbf  -file rootCA.pem   -keystore trustStoreFile
@@ -26,4 +25,9 @@ docker stop $(docker ps -aq)
 docker service rm <stackname>_<service_name> e.g.  docker service rm traefik_frontend2
 docker stack deploy -c <docker-compose_file>.yml traefik
 docker service logs <stack_servicename> -f
+mvn clean install jib:dockerBuild
+
+#nodejs commands:
+npm install -g @angular/cli
+ng new <appname>
 ```
