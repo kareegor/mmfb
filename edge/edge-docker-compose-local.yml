@@ -65,4 +65,4 @@ services:
       depends_on:
         - traefik
         - postgres   
-        
+     

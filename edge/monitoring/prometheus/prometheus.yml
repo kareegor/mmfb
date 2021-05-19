@@ -1,0 +1,33 @@
+global:
+  scrape_interval: 15s # By default, scrape targets every 15 seconds.
+  evaluation_interval: 15s # By default, scrape targets every 15 seconds.
+scrape_configs:
+  - job_name: 'prometheus'
+    # Override the global default and scrape targets from this job every 5 seconds.
+    scrape_interval: 5s
+
+    # scheme defaults to 'http' enable https in case your application is server via https
+    #scheme: https
+    # basic auth is not needed by default. See https://www.jhipster.tech/monitoring/#configuring-metrics-forwarding for details
+    #basic_auth:
+    # username: admin
+    # password: admin
+    metrics_path: /management/prometheus
+    consul_sd_configs:
+      - server: 'consul:8500'
+    relabel_configs:
+      - source_labels: ['__meta_consul_service']
+        regex:         '(.*)'
+        target_label:  'job'
+        replacement:   '$1'
+      - source_labels: ['__meta_consul_node']
+        regex:         '(.*)'
+        target_label:  'instance'
+        replacement:   '$1'
+      - source_labels: ['__meta_consul_tags']
+        regex:          '(.*)'
+        target_label:  'group'
+        replacement:   '$1'
+    # static_configs:
+    #   - targets:
+    #       - localhost:8380

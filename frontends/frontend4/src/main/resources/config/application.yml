@@ -1,3 +1,14 @@
+zuul: 
+  sensitive-headers: Cookie,Set-Cookie #see https://github.com/spring-cloud/spring-cloud-netflix/issues/3126
+  host:
+    max-total-connections: 1000
+    max-per-route-connections: 100
+    connect-timeout-millis: 10000
+    socket-timeout-millis: 1000000
+  semaphore:
+    max-semaphores: 500
+  ignoredServices: 'consul,app4' 
+
 spring:
   application:
     name: frontend4
