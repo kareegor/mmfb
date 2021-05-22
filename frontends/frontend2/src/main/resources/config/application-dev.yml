@@ -12,4 +12,4 @@ spring:
           oidc:
             redirect-uri: "https://www.mmfb.com/app2/login/oauth2/code/{registrationId}"
             client-id: apiclient
-            client-secret: web_app
+            client-secret: d4e0aa8f-4a4c-449e-b4fd-252bc8a227d1

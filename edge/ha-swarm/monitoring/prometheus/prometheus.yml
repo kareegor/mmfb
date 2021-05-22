@@ -7,20 +7,12 @@ scrape_configs:
     scrape_interval: 5s
     metrics_path: /management/prometheus
     consul_sd_configs:
-      - server: 'consul:8500'
+      - server: 'consul-leader:8500'
     relabel_configs:
-      - source_labels: ['__meta_consul_service']
-        regex:         '(.*)'
-        target_label:  'job'
-        replacement:   '$1'
-      - source_labels: ['__meta_consul_node']
-        regex:         '(.*)'
-        target_label:  'instance'
-        replacement:   '$1'
-      - source_labels: ['__meta_consul_tags']
-        regex:          '(.*)'
-        target_label:  'group'
-        replacement:   '$1'
+      - source_labels: [__meta_consul_tags]
+        regex: .*,contextPath=([^,]+),.*
+        replacement:  '$1/management/prometheus'
+        target_label: __metrics_path__  
     # static_configs:
     #   - targets:
     #       - localhost:8380

@@ -7,7 +7,7 @@ services:
       - 80:80
       - 443:443
     deploy:
-      replicas: 3
+      replicas: 2
       placement:
         constraints:
             - node.role == manager
@@ -31,9 +31,9 @@ services:
         - traefik.http.middlewares.https-redirect.redirectscheme.permanent=true
         # traefik-http set up only to use the middleware to redirect to https
         # Uses the environment variable DOMAIN
-        - traefik.http.routers.traefik-public-http.rule=Host(`traefik.mmfb.com`)
-        - traefik.http.routers.traefik-public-http.entrypoints=http
-        - traefik.http.routers.traefik-public-http.middlewares=https-redirect
+        # - traefik.http.routers.traefik-public-http.rule=Host(`traefik.mmfb.com`)
+        # - traefik.http.routers.traefik-public-http.entrypoints=http
+        # - traefik.http.routers.traefik-public-http.middlewares=https-redirect
         # traefik-https the actual router using HTTPS
         # Uses the environment variable DOMAIN
         - traefik.http.routers.traefik-public-https.rule=Host(`traefik.mmfb.com`)
@@ -50,8 +50,8 @@ services:
         
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - ../traefik/config.yml:/etc/traefik/config.yml:ro
-      - ../traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./traefik/config.yml:/etc/traefik/config.yml:ro
+      - ./traefik/traefik.yml:/etc/traefik/traefik.yml:ro
       - ../certs:/etc/certs:ro
     networks:
       - default
@@ -70,7 +70,7 @@ services:
        - default
        - traefik-public  
   keycloak:
-      image: quay.io/keycloak/keycloak:latest
+      image: kareegar/keycloak:latest
       environment:
         DB_VENDOR: POSTGRES
         DB_ADDR: postgres
@@ -82,23 +82,28 @@ services:
         KEYCLOAK_PASSWORD: Pa55w0rd
         PROXY_ADDRESS_FORWARDING: "true"
         KEYCLOAK_FRONTEND_URL: https://www.mmfb.com/auth
+        # JGROUPS_DISCOVERY_EXTERNAL_IP: 10.0.1.1 
+        # JGROUPS_DISCOVERY_PROTOCOL: JDBC_PING 
+        # JGROUPS_DISCOVERY_PROPERTIES: datasource_jndi_name=java:jboss/datasources/KeycloakDS
+        # JDBC_PARAMS: useSSL=false 
         # CACHE_OWNERS_AUTH_SESSIONS_COUNT: 2
-        # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
-        #JDBC_PARAMS: "ssl=true"
       command:
        - "-b 0.0.0.0"
        - "-Dkeycloak.profile.feature.upload_scripts=enabled -Dkeycloak.profile.feature.docker=enabled"
        #- "-Dkeycloak.migration.action=import -Dkeycloak.migration.provider=dir -Dkeycloak.migration.dir=/opt/jboss/keycloak/import-dir -Dkeycloak.migration.strategy=OVERWRITE_EXISTING"
       deploy:
-       mode: replicated
-       replicas: 1
-       restart_policy:
-        condition: on-failure
-        max_attempts: 3
-        window: 120s
-       update_config:
-        parallelism: 1
-        failure_action: rollback
+      #  mode: replicated
+      #  replicas: 2
+      #  placement:
+      #   constraints:
+      #       - node.role == manager
+      #  restart_policy:
+      #   condition: on-failure
+      #   max_attempts: 3
+      #   window: 120s
+      #  update_config:
+      #   parallelism: 1
+      #   failure_action: rollback
        labels:
           traefik.enable: "true"
           traefik.constraint-label: traefik-public
@@ -112,8 +117,8 @@ services:
           traefik.http.routers.auth.middlewares: auth@docker  
           traefik.http.services.keycloak.loadbalancer.server.port: 8080 
           traefik.http.services.keycloak.loadbalancer.passhostheader: "true"
-          traefik.http.services.keycloak.loadbalancer.sticky.cookie: "true"
-          traefik.http.services.keycloak.loadbalancer.sticky.cookie.name: "keycloak"
+          # traefik.http.services.keycloak.loadbalancer.sticky.cookie: "true"
+          # traefik.http.services.keycloak.loadbalancer.sticky.cookie.name: "keycloak"
       depends_on:
         - postgres   
       networks:

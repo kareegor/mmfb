@@ -1,0 +1,15 @@
+http:
+  routers:
+    traefik:
+      rule: "Host(`traefik.mmfb.com`)"
+      service: "api@internal"
+      tls:
+        domains:
+          - main: "mmfb.com"
+            sans:
+              - "*.mmfb.com"
+
+tls:
+  certificates:
+    - certFile: "/etc/certs/mmfb-cert.pem"
+      keyFile: "/etc/certs/mmfb-key.pem"

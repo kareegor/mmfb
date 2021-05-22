@@ -6,14 +6,15 @@ services:
       extra_hosts:
         - "www.mmfb.com:192.168.0.107" #add hostname to /etc/hosts file of docker
       environment:
+        SPRING_CLOUD_CONSUL_HOST: consul-leader
         SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI: "https://www.mmfb.com/auth/realms/mmfb"
         SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_JWK_SET_URI: "https://www.mmfb.com/auth/realms/mmfb/protocol/openid-connect/certs"
         SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_REDIRECT_URI: "https://www.mmfb.com/app1/login/oauth2/code/{registrationId}"
         SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_ID: "apiclient"
-        SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET: "eadb35dc-3263-488e-9394-49ab39140ced"
+        SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET: "26ded8a8-9298-4669-a3b0-e5d81ca568d7"
       deploy:
        mode: replicated
-       replicas: 1
+       replicas: 2
        restart_policy:
           condition: on-failure
           max_attempts: 3
@@ -51,10 +52,10 @@ services:
         SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_JWK_SET_URI: "https://www.mmfb.com/auth/realms/mmfb/protocol/openid-connect/certs"
         SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_REDIRECT_URI: "https://www.mmfb.com/app2/login/oauth2/code/{registrationId}"
         SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_ID: "apiclient"
-        SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET: "eadb35dc-3263-488e-9394-49ab39140ced"
+        SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET: "26ded8a8-9298-4669-a3b0-e5d81ca568d7"
       deploy:
        mode: replicated
-       replicas: 1
+       replicas: 2
        restart_policy:
           condition: on-failure
           max_attempts: 3

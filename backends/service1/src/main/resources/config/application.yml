@@ -1,3 +1,7 @@
+server:
+  port: 9180
+  servlet:
+    context-path: /service1 
 spring:
   application:
     name: service1
@@ -6,15 +10,12 @@ spring:
   cloud:
     consul:
       discovery:
-        healthCheckPath: /management/health
-        instanceId: service1:${spring.application.instance-id:${random.value}}
+        healthCheckPath: /service1/management/health
+        instanceId: ${spring.application.name}:${spring.application.instance-id:${random.value}}
         service-name: service1
       config:
         watch:
           enabled: false  
-server:
-  port: 9180
-
 management: #https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html
   endpoints:
     web:

@@ -5,3 +5,6 @@ edge/letsencrypt/acme.json
 **/**/.classpath
 **/**/.factorypath
 **/**/.project
+**/**/.settings/**
+**/**/.gitignore
+**/**/.gitkeep

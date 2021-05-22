@@ -1,8 +1,10 @@
 # mmfb
 multi micro frontends and backends
-
+We are not providing a proper Readme now to build from scratch. To do it better yourself we highly recommend you to join the sessions of bootcamp: https://beacloudpro.com/bootcamps/bootcamp_book
+Youtube link of session 1: https://www.youtube.com/watch?v=Q8WsYyz1CEs&t=2192s
 
 ```bash
+# below are some frequently required commands 
 #add hostname in /etc/hosts file
 127.0.1.1 www.mmfb.com
 127.0.1.1 traefik.mmfb.com
@@ -23,11 +25,17 @@ keytool -import  -trustcacerts  -alias mmbf  -file rootCA.pem   -keystore trustS
 docker volume rm $(docker volume ls -q)
 docker stop $(docker ps -aq)
 docker service rm <stackname>_<service_name> e.g.  docker service rm traefik_frontend2
+export HASHED_PASSWORD=$(openssl passwd -apr1 $PASSWORD)
+docker network create --driver=overlay traefik-public
 docker stack deploy -c <docker-compose_file>.yml traefik
 docker service logs <stack_servicename> -f
+docker service rm <stack_servicename>
 mvn clean install jib:dockerBuild
-
+#to build a clustered keycloak
+cd edge/ha-swarm/keycloak
+docker build . -t kareegar/keycloak
 #nodejs commands:
 npm install -g @angular/cli
 ng new <appname>
+
 ```

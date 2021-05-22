@@ -1,0 +1,54 @@
+version: "3.3"
+
+services:
+  consul-leader:
+    image: consul
+    command: agent -server -bootstrap -ui -dev -client 0.0.0.0 
+    volumes:
+      - consul-data-leader:/consul/data
+    environment:
+      - CONSUL_BIND_INTERFACE=eth0
+      - 'CONSUL_LOCAL_CONFIG={"leave_on_terminate": true}'
+    networks:
+      - default
+      - traefik-public
+    deploy:
+      labels:
+        traefik.enable: "true"
+        traefik.docker.network: traefik-public
+        traefik.constraint-label: traefik-public
+        traefik.http.routers.consul.rule: Host(`consul.mmfb.com`)
+        traefik.http.middlewares.consul.headers.framedeny: "false"
+        traefik.http.middlewares.consul.headers.sslredirect: "true"
+        traefik.http.middlewares.consul.headers.contentsecuritypolicy: upgrade-insecure-requests
+        traefik.http.middlewares.consul.headers.sslproxyheaders.x-forwarded-proto: https
+        traefik.http.routers.consul.tls: "true"    
+        traefik.http.routers.consul.middlewares: consul
+        traefik.http.services.consul.loadbalancer.server.port: 8500
+        traefik.http.services.consul.loadbalancer.passhostheader: "true"
+        traefik.http.services.consul.loadbalancer.sticky.cookie: "true"
+        traefik.http.services.consul.loadbalancer.sticky.cookie.name: "consul"  
+#        traefik.http.middlewares.admin-consul.basicauth.users: admin:${HASHED_PASSWORD?Variable not set}
+  consul-replica:
+    image: consul
+    command: agent -server -client=0.0.0.0 -retry-join="consul-leader"
+    volumes:
+      - consul-data-replica:/consul/data
+    environment:
+      - CONSUL_BIND_INTERFACE=eth0
+      - 'CONSUL_LOCAL_CONFIG={"leave_on_terminate": true}'
+    networks:
+      - default
+      - traefik-public
+    deploy:
+      replicas: 2
+      placement:
+        preferences:
+          - spread: node.id
+volumes:
+  consul-data-leader:
+  consul-data-replica:
+
+networks:
+  traefik-public:
+    external: true          

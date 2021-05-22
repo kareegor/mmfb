@@ -10,7 +10,7 @@ providers:
     endpoint: "unix:///var/run/docker.sock"
     watch: true
     exposedByDefault: false
- #   swarmmode: true
+    swarmmode: true
 
   file:
     filename: /etc/traefik/config.yml
