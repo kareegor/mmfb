@@ -39,6 +39,18 @@
 					<artifactId>spring-boot-starter-oauth2-client</artifactId>
 				</dependency>
 				<!-- END SECURITY -->
+				<dependency>
+					<groupId>io.micrometer</groupId>
+					<artifactId>micrometer-registry-prometheus</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.springframework.cloud</groupId>
+					<artifactId>spring-cloud-starter-consul-discovery</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-actuator</artifactId>
+				</dependency>
 			</dependencies>
 			<build>
 				<plugins>

@@ -1,6 +1,12 @@
 server:
   port: 8580
 spring:  
+  cloud:
+    consul:
+      discovery:
+        prefer-ip-address: true
+      host: localhost
+      port: 8500
   security:
     oauth2:
       client:
