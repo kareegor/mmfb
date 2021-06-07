@@ -1,0 +1,21 @@
+server:
+  port: 9280
+spring:  
+  cloud:
+    consul:
+      discovery:
+        prefer-ip-address: true
+      host: localhost
+      port: 8500
+  security:
+    oauth2:
+      client:
+        provider:
+          oidc:
+            jwk-set-uri: https://www.mmfb.com/auth/realms/mmfb/protocol/openid-connect/certs
+            issuer-uri: https://www.mmfb.com/auth/realms/mmfb
+        registration:
+          oidc:
+            redirect-uri: "https://www.mmfb.com/service1/login/oauth2/code/{registrationId}"
+            client-id: apiclient
+            client-secret: 7169adfb-36d9-47ad-97c2-0889eb0fafc1

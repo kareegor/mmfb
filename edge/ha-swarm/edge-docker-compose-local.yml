@@ -61,7 +61,7 @@ services:
   postgres:
       image: postgres
       volumes:
-        - postgres_data:/var/lib/postgresql/data
+        - postgres_data1:/var/lib/postgresql/data
       environment:
         POSTGRES_DB: keycloak
         POSTGRES_USER: keycloak
@@ -82,28 +82,28 @@ services:
         KEYCLOAK_PASSWORD: Pa55w0rd
         PROXY_ADDRESS_FORWARDING: "true"
         KEYCLOAK_FRONTEND_URL: https://www.mmfb.com/auth
-        # JGROUPS_DISCOVERY_EXTERNAL_IP: 10.0.1.1 
-        # JGROUPS_DISCOVERY_PROTOCOL: JDBC_PING 
-        # JGROUPS_DISCOVERY_PROPERTIES: datasource_jndi_name=java:jboss/datasources/KeycloakDS
-        # JDBC_PARAMS: useSSL=false 
+        JGROUPS_DISCOVERY_EXTERNAL_IP: 10.0.1.1 
+        JGROUPS_DISCOVERY_PROTOCOL: JDBC_PING 
+        JGROUPS_DISCOVERY_PROPERTIES: datasource_jndi_name=java:jboss/datasources/KeycloakDS
+        JDBC_PARAMS: useSSL=false 
         # CACHE_OWNERS_AUTH_SESSIONS_COUNT: 2
       command:
        - "-b 0.0.0.0"
        - "-Dkeycloak.profile.feature.upload_scripts=enabled -Dkeycloak.profile.feature.docker=enabled"
        #- "-Dkeycloak.migration.action=import -Dkeycloak.migration.provider=dir -Dkeycloak.migration.dir=/opt/jboss/keycloak/import-dir -Dkeycloak.migration.strategy=OVERWRITE_EXISTING"
       deploy:
-      #  mode: replicated
-      #  replicas: 2
-      #  placement:
-      #   constraints:
-      #       - node.role == manager
-      #  restart_policy:
-      #   condition: on-failure
-      #   max_attempts: 3
-      #   window: 120s
-      #  update_config:
-      #   parallelism: 1
-      #   failure_action: rollback
+       mode: replicated
+       replicas: 1
+       placement:
+        constraints:
+            - node.role == manager
+       restart_policy:
+        condition: on-failure
+        max_attempts: 3
+        window: 120s
+       update_config:
+        parallelism: 1
+        failure_action: rollback
        labels:
           traefik.enable: "true"
           traefik.constraint-label: traefik-public
@@ -117,14 +117,14 @@ services:
           traefik.http.routers.auth.middlewares: auth@docker  
           traefik.http.services.keycloak.loadbalancer.server.port: 8080 
           traefik.http.services.keycloak.loadbalancer.passhostheader: "true"
-          # traefik.http.services.keycloak.loadbalancer.sticky.cookie: "true"
-          # traefik.http.services.keycloak.loadbalancer.sticky.cookie.name: "keycloak"
+          traefik.http.services.keycloak.loadbalancer.sticky.cookie: "true"
+          traefik.http.services.keycloak.loadbalancer.sticky.cookie.name: "keycloak"
       depends_on:
         - postgres   
       networks:
         - traefik-public  
 volumes:
-  postgres_data:
+  postgres_data1:
       driver: local
 
 networks:

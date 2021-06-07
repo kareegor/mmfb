@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.kareegar.mmfb.frontend1.conf.ApplicationProperties;
+import com.kareegar.mmfb.frontend1.gateway.filter.TokenRelayFilter;
+import com.kareegar.mmfb.frontend1.util.TokenUtil;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,11 +16,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.util.StringUtils;
 
 @EnableConfigurationProperties({ ApplicationProperties.class })
 @SpringBootApplication
+@EnableZuulProxy
 public class Frontend1Application {
 	public static final String SPRING_PROFILE_DEFAULT_KEY = "spring.profiles.default";
 	public static final String SPRING_PROFILE_DEFAULT_VALUE = "dev";
@@ -77,5 +82,15 @@ public class Frontend1Application {
 				"\n----------------------------------------------------------\n\t"
 						+ "Config Server: \t{}\n----------------------------------------------------------",
 				configServerStatus);
+	}
+
+	/**
+	 * Making Spring context aware of the Zuul filter
+	 * @param tokenUtil
+	 * @return
+	 */
+	@Bean
+	public TokenRelayFilter authHeaderFilter(TokenUtil tokenUtil) {
+		return new TokenRelayFilter(tokenUtil);
 	}
 }

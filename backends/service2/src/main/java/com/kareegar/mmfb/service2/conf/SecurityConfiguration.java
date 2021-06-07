@@ -1,4 +1,4 @@
-package com.kareegar.mmfb.service1.conf;
+package com.kareegar.mmfb.service2.conf;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

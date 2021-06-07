@@ -15,7 +15,39 @@ spring:
         service-name: ${spring.application.name}
       config:
         watch:
-          enabled: false       
+          enabled: false      
+zuul:
+# Pass Authorization header downstream
+  sensitiveHeaders: Cookie,Set-Cookie
+  ignoredServices: '*'
+  routes:
+    service1:
+      path: /service1/**
+      service-id: service1
+      strip-prefix: false
+# zuul: # those values must be configured depending on the application specific needs
+#   sensitive-headers: Cookie,Set-Cookie #see https://github.com/spring-cloud/spring-cloud-netflix/issues/3126
+#   host:
+#     time-to-live: -1
+#     connect-timeout-millis: 5000
+#     max-total-connections: 1000
+#     max-per-route-connections: 100
+#     socket-timeout-millis: 60000
+# #  prefix: /services
+#   semaphore:
+#     max-semaphores: 500
+#   ignoredServices: 'consul,app,api' # Prevent Consul and the "app" app itself from having a Zuul route automatically created for them
+# ribbon:
+#   ReadTimeout: 60000
+#   connection-timeout: 3000
+# # See https://github.com/Netflix/Hystrix/wiki/Configuration hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds
+# hystrix:
+#   command:
+#     default:
+#       execution:
+#         isolation:
+#           thread:
+#             timeoutInMilliseconds: 122000 
 management: #https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-features.html
   endpoints:
     web:

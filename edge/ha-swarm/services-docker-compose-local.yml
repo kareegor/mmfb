@@ -22,11 +22,67 @@ services:
        update_config:
           parallelism: 1
           failure_action: rollback 
+      #  labels:
+      #     traefik.enable: "true"
+      #     traefik.docker.network: traefik-public
+      #     traefik.constraint-label: traefik-public
+      #     traefik.http.routers.service1.rule: Host(`www.mmfb.com`) && PathPrefix(`/service1`)  
+      #     traefik.http.middlewares.service1.headers.framedeny: "false"
+      #     traefik.http.middlewares.service1.headers.sslredirect: "true"
+      #     traefik.http.middlewares.service1.headers.contentsecuritypolicy: upgrade-insecure-requests
+      #     traefik.http.middlewares.service1.headers.sslproxyheaders.x-forwarded-proto: https
+      #     traefik.http.routers.service1.tls: "true"    
+      #     traefik.http.routers.service1.middlewares: service1@docker 
+      #     traefik.http.services.service1.loadbalancer.server.port: 9180
+      #     traefik.http.services.service1.loadbalancer.passhostheader: "true"
+      #     traefik.http.services.service1.loadbalancer.sticky.cookie: "true"
+      #     traefik.http.services.service1.loadbalancer.sticky.cookie.name: "service1"            
       volumes:
        # Map the certificats into the container
        - ../certs:/etc/certs:ro
       networks:
         - traefik-public  
+  service2:
+      image: service2:latest 
+      extra_hosts:
+        - "www.mmfb.com:192.168.0.107" #add hostname to /etc/hosts file of docker
+      environment:
+        SPRING_CLOUD_CONSUL_HOST: consul-leader
+        SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI: "https://www.mmfb.com/auth/realms/mmfb"
+        SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_JWK_SET_URI: "https://www.mmfb.com/auth/realms/mmfb/protocol/openid-connect/certs"
+        SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_REDIRECT_URI: "https://www.mmfb.com/app1/login/oauth2/code/{registrationId}"
+        SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_ID: "apiclient"
+        SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET: "7169adfb-36d9-47ad-97c2-0889eb0fafc1"
+      deploy:
+       mode: replicated
+       replicas: 1
+       restart_policy:
+          condition: on-failure
+          max_attempts: 3
+          window: 120s
+       update_config:
+          parallelism: 1
+          failure_action: rollback 
+      #  labels:
+      #     traefik.enable: "true"
+      #     traefik.docker.network: traefik-public
+      #     traefik.constraint-label: traefik-public
+      #     traefik.http.routers.service2.rule: Host(`www.mmfb.com`) && PathPrefix(`/service2`)  
+      #     traefik.http.middlewares.service2.headers.framedeny: "false"
+      #     traefik.http.middlewares.service2.headers.sslredirect: "true"
+      #     traefik.http.middlewares.service2.headers.contentsecuritypolicy: upgrade-insecure-requests
+      #     traefik.http.middlewares.service2.headers.sslproxyheaders.x-forwarded-proto: https
+      #     traefik.http.routers.service2.tls: "true"    
+      #     traefik.http.routers.service2.middlewares: service2@docker 
+      #     traefik.http.services.service2.loadbalancer.server.port: 9280
+      #     traefik.http.services.service2.loadbalancer.passhostheader: "true"
+      #     traefik.http.services.service2.loadbalancer.sticky.cookie: "true"
+      #     traefik.http.services.service2.loadbalancer.sticky.cookie.name: "service2"            
+      volumes:
+       # Map the certificats into the container
+       - ../certs:/etc/certs:ro
+      networks:
+        - traefik-public          
 networks: 
   traefik-public:
       external: true
