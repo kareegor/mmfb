@@ -17,10 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class ServiceInfo {
     @Autowired
     Service2Proxy proxyService;
+   
     @GetMapping("/info")
     public String info() {
         return "Hello :: Service1";
     }
+
     @GetMapping("/infoall")
     public ResponseEntity<List<String>> infoall() {
         String service2Info = proxyService.info();

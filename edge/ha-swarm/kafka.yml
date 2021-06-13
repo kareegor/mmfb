@@ -1,0 +1,56 @@
+version: '3.3'
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+    ports:
+      - "2181:2181"
+    networks:
+        - traefik-public        
+  kafka0:
+    image: wurstmeister/kafka:latest
+    ports:
+      - target: 9094
+        published: 9094
+        protocol: tcp
+        mode: host
+    environment:
+      HOSTNAME_COMMAND: "docker info | grep ^Name: | cut -d' ' -f 2"
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://:9092,OUTSIDE://kafka0:9094
+      KAFKA_LISTENERS: INSIDE://:9092,OUTSIDE://:9094
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - traefik-public        
+  kafka-manager:
+    image: sheepkiller/kafka-manager:latest
+    links:
+      - zookeeper
+      - kafka0
+    environment:
+      ZK_HOSTS: zookeeper:2181
+      APPLICATION_SECRET: letmein
+      KM_ARGS: -Djava.net.preferIPv4Stack=true
+    networks:
+      - traefik-public    
+    deploy:
+        labels:
+          traefik.enable: "true"
+          traefik.docker.network: traefik-public
+          traefik.constraint-label: traefik-public
+          traefik.http.routers.kafkaman.rule: Host(`kafkaman.mmfb.com`)
+          traefik.http.middlewares.kafkaman.headers.framedeny: "false"
+          traefik.http.middlewares.kafkaman.headers.sslredirect: "true"
+          traefik.http.middlewares.kafkaman.headers.contentsecuritypolicy: upgrade-insecure-requests
+          traefik.http.middlewares.kafkaman.headers.sslproxyheaders.x-forwarded-proto: https
+          traefik.http.routers.kafkaman.tls: "true"    
+          traefik.http.routers.kafkaman.middlewares: kafkaman
+          traefik.http.services.kafkaman.loadbalancer.server.port: 9000
+          traefik.http.services.kafkaman.loadbalancer.passhostheader: "true"
+          traefik.http.services.kafkaman.loadbalancer.sticky.cookie: "true"
+          traefik.http.services.kafkaman.loadbalancer.sticky.cookie.name: "kafkaman"    
+networks:
+  traefik-public:
+    external: true      

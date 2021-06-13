@@ -1,15 +1,34 @@
 server:
   port: 9180
 spring:  
+  cloud:
+    stream:
+     bindings:
+      output:
+       useNativeEncoding: true
+      output1:
+       useNativeEncoding: true 
+      input:
+       destination: topic1
+       useNativeEncoding: true 
+     kafka:
+       binder:
+        brokers: localhost
+        defaultBrokerPort: 9094
+    consul:
+      discovery:
+        prefer-ip-address: true
+      host: localhost
+      port: 8500
   security:
     oauth2:
       client:
         provider:
-         oidc:
+          oidc:
             jwk-set-uri: https://www.mmfb.com/auth/realms/mmfb/protocol/openid-connect/certs
             issuer-uri: https://www.mmfb.com/auth/realms/mmfb
         registration:
           oidc:
-            redirect-uri: "https://www.mmfb.com/app1/login/oauth2/code/{registrationId}"
+            redirect-uri: "https://www.mmfb.com/service1/login/oauth2/code/{registrationId}"
             client-id: apiclient
-            client-secret: web_app
+            client-secret: 7169adfb-36d9-47ad-97c2-0889eb0fafc1

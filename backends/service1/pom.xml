@@ -48,14 +48,14 @@
 					<artifactId>spring-boot-starter-oauth2-client</artifactId>
 				</dependency>
 				<!-- END SECURITY -->
-				<dependency>
+				<!-- <dependency>
 					<groupId>org.springframework.cloud</groupId>
 					<artifactId>spring-cloud-starter-consul-discovery</artifactId>
 				</dependency>
 				<dependency>
 					<groupId>org.springframework.cloud</groupId>
 					<artifactId>spring-cloud-starter-consul-config</artifactId>
-				</dependency>
+				</dependency> -->
 				<dependency>
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
@@ -63,6 +63,22 @@
 				<dependency>
 					<groupId>org.springframework.cloud</groupId>
 					<artifactId>spring-cloud-starter-openfeign</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.springframework.cloud</groupId>
+					<artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.httpcomponents</groupId>
+					<artifactId>httpclient</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.springframework.cloud</groupId>
+					<artifactId>spring-cloud-stream-binder-kafka</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.springframework.kafka</groupId>
+					<artifactId>spring-kafka</artifactId>
 				</dependency>
 			</dependencies>
 			<build>
@@ -108,8 +124,20 @@
 				</dependency>
 				<dependency>
 					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-actuator</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>io.micrometer</groupId>
+					<artifactId>micrometer-registry-prometheus</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-starter-test</artifactId>
 					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-devtools</artifactId>
 				</dependency>
 				<!-- START SECURITY -->
 				<dependency>
@@ -117,6 +145,34 @@
 					<artifactId>spring-boot-starter-oauth2-client</artifactId>
 				</dependency>
 				<!-- END SECURITY -->
+				 <dependency>
+					<groupId>org.springframework.cloud</groupId>
+					<artifactId>spring-cloud-starter-consul-discovery</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.springframework.cloud</groupId>
+					<artifactId>spring-cloud-starter-consul-config</artifactId>
+				</dependency> 
+				<dependency>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.springframework.cloud</groupId>
+					<artifactId>spring-cloud-starter-openfeign</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.springframework.cloud</groupId>
+					<artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.springframework.cloud</groupId>
+					<artifactId>spring-cloud-stream-binder-kafka</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>org.springframework.kafka</groupId>
+					<artifactId>spring-kafka</artifactId>
+				</dependency>
 			</dependencies>
 			<build>
 				<plugins>
@@ -135,11 +191,6 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-compiler-plugin</artifactId>
-					</plugin>
-					<plugin>
-						<groupId>org.apache.maven.plugins</groupId>
-						<artifactId>maven-war-plugin</artifactId>
-						<version>${maven-war-plugin.version}</version>
 					</plugin>
 					<plugin>
 						<groupId>org.springframework.boot</groupId>

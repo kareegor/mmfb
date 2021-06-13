@@ -11,18 +11,18 @@ spring:
     # Otherwise, it will be filled in by maven when building the JAR file
     # Either way, it can be overridden by `--spring.profiles.active` value passed in the commandline or `-Dspring.profiles.active` set in `JAVA_OPTS`
     active: #spring.profiles.active#
-  cloud:
-    consul:
-      config:
-        fail-fast: false # if not in "prod" profile, do not force to use Spring Cloud Config
-        format: yaml
-        profile-separator: '-'
-      discovery:
-        tags:
-          - profile=${spring.profiles.active}
-          - version=#project.version#
-          - __meta_consul_tags=backends
-          - __meta_consul_service=frontend1
-          - __meta_consul_node=1
-      host: localhost
-      port: 8500
+  # cloud:
+  #   consul:
+  #     config:
+  #       fail-fast: false # if not in "prod" profile, do not force to use Spring Cloud Config
+  #       format: yaml
+  #       profile-separator: '-'
+  #     discovery:
+  #       tags:
+  #         - profile=${spring.profiles.active}
+  #         - version=#project.version#
+  #         - __meta_consul_tags=backends
+  #         - __meta_consul_service=frontend1
+  #         - __meta_consul_node=1
+  #     host: localhost
+  #     port: 8500

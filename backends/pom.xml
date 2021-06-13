@@ -15,12 +15,12 @@
 		<node.version>v12.16.1</node.version>
 		<npm.version>6.14.5</npm.version>
 		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
-		<spring-boot.version>2.3.10.RELEASE</spring-boot.version>
+		<spring-boot.version>2.3.12.RELEASE</spring-boot.version>
 		<maven-war-plugin.version>3.2.3</maven-war-plugin.version>
 		<mapstruct.version>1.3.1.Final</mapstruct.version>
 		<maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
 		<maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
-		<spring-cloud.version>Hoxton.SR10</spring-cloud.version>
+		<spring-cloud.version>Hoxton.SR11</spring-cloud.version>
 		<spring-cloud-consul.version>2.2.7.RELEASE</spring-cloud-consul.version>
 		<micrometer-prometheus.version>1.7.0</micrometer-prometheus.version>
 	</properties>
@@ -33,6 +33,11 @@
 			<dependency>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-starter-web</artifactId>
+				<version>${spring-boot.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-starter-webflux</artifactId>
 				<version>${spring-boot.version}</version>
 			</dependency>
 			<dependency>
@@ -82,6 +87,26 @@
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-starter-openfeign</artifactId>
 				<version>${spring-cloud-consul.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-starter-netflix-ribbon</artifactId>
+				<version>${spring-cloud-consul.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-stream-binder-kafka</artifactId>
+				<version>3.0.12.RELEASE</version>
+			</dependency> 
+			<dependency>
+				<groupId>org.springframework.kafka</groupId>
+				<artifactId>spring-kafka</artifactId>
+				<version>2.5.13.RELEASE</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpclient</artifactId>
+				<version>4.5.13</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>

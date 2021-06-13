@@ -16,6 +16,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
@@ -24,6 +25,7 @@ import org.springframework.util.StringUtils;
 @EnableConfigurationProperties({ ApplicationProperties.class })
 @SpringBootApplication
 @EnableZuulProxy
+@EnableDiscoveryClient
 public class Frontend1Application {
 	public static final String SPRING_PROFILE_DEFAULT_KEY = "spring.profiles.default";
 	public static final String SPRING_PROFILE_DEFAULT_VALUE = "dev";

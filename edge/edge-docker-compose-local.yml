@@ -1,7 +1,7 @@
 version: "3.3"
 
 volumes:
-  postgres_data:
+  postgres_data2:
       driver: local
 services:
   traefik:
@@ -24,21 +24,21 @@ services:
       - ./traefik/config.yml:/etc/traefik/config.yml:ro
       # Map the certificats into the container
       - ./certs:/etc/certs:ro
-  postgres:
+  postgres2:
       image: postgres
       volumes:
-        - postgres_data:/var/lib/postgresql/data
+        - postgres_data2:/var/lib/postgresql/data
       environment:
-        POSTGRES_DB: keycloak
-        POSTGRES_USER: keycloak
+        POSTGRES_DB: keycloak2
+        POSTGRES_USER: keycloak2
         POSTGRES_PASSWORD: password
-  keycloak:
+  keycloak2:
       image: quay.io/keycloak/keycloak:latest
       environment:
         DB_VENDOR: POSTGRES
-        DB_ADDR: postgres
-        DB_DATABASE: keycloak
-        DB_USER: keycloak
+        DB_ADDR: postgres2
+        DB_DATABASE: keycloak2
+        DB_USER: keycloak2
         DB_SCHEMA: public
         DB_PASSWORD: password
         KEYCLOAK_USER: admin
@@ -64,5 +64,5 @@ services:
         - 8080:8080
       depends_on:
         - traefik
-        - postgres   
+        - postgres2   
      

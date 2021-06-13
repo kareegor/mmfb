@@ -2,6 +2,20 @@ server:
   port: 9280
 spring:  
   cloud:
+    stream:
+     bindings:
+      output:
+       destination: topic1
+       useNativeEncoding: true
+      output1:
+       useNativeEncoding: true 
+      input:
+       destination: topic1
+       useNativeEncoding: true 
+     kafka:
+       binder:
+        brokers: localhost
+        defaultBrokerPort: 9094  
     consul:
       discovery:
         prefer-ip-address: true
