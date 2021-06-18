@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-Service1<service1>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "com.kareegar.mmfb.service1.Service1",
+            "projectName": "service1",
+            "args": ""
+        }
+    ]
+}

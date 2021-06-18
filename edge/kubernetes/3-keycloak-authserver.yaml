@@ -1,0 +1,93 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: mmfb
+  annotations:
+    app: auth
+  creationTimestamp: null
+  labels:
+    app: auth
+  name: auth
+spec:
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  selector:
+    app: auth
+status:
+  loadBalancer: {}
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: auth
+  namespace: mmfb
+  labels:
+    app: auth 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth
+  template:
+    metadata:
+      labels:
+        app: auth    
+    spec:
+      containers:
+      - name: auth
+        args:
+          - -b 0.0.0.0
+          - -Dkeycloak.profile.feature.upload_scripts=enabled
+        image: quay.io/keycloak/keycloak:13.0.1
+        env:
+        - name: DB_VENDOR
+          value: h2
+        - name: KEYCLOAK_FRONTEND_URL
+          value: https://www.mmfb.kareegor.com/auth
+        - name: KEYCLOAK_PASSWORD
+          value: Pa55w0rd
+        - name: KEYCLOAK_USER
+          value: admin
+        - name: PROXY_ADDRESS_FORWARDING
+          value: "true"
+        - name: JGROUPS_DISCOVERY_PROTOCOL
+          value: dns.DNS_PING
+        - name: JGROUPS_DISCOVERY_PROPERTIES
+          value: 'dns_query=auth.mmfb.svc.cluster.local'
+        ports:
+          - containerPort: 8080
+            protocol: TCP
+          - containerPort: 8443
+            name: https
+            protocol: TCP
+        # readinessProbe:
+        #   failureThreshold: 10
+        #   httpGet:
+        #     path: /auth/realms/master
+        #     port: 8080
+        #     scheme: HTTP
+        #   initialDelaySeconds: 30
+        securityContext:
+          privileged: true
+        # triggers:
+        # - type: ConfigChange    
+
+---            
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: auth-route
+  namespace: mmfb
+spec:
+  entryPoints:
+      - websecure
+  routes:
+      - match: Host(`www.mmfb.kareegor.com`) && PathPrefix(`/auth`)
+        kind: Rule
+        services:
+          - name: auth
+            port: 8080
+  tls:
+    -secretName: secret-tls          

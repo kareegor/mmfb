@@ -15,7 +15,7 @@ Youtube link of session 1: https://www.youtube.com/watch?v=Q8WsYyz1CEs&t=2192s
 mkcert -install
 
 # Generate certificate for domain "mmfb.com" and their sub-domains in ${projecthome}/edge/certs folder
-mkcert -cert-file certs/mmfb-cert.pem -key-file certs/mmfb-key.pem "mmfb.com" "*.mmfb.com"
+mkcert -cert-file certs/mmfb-cert.pem -key-file certs/mmfb-key.pem "mmfb.kareegor.com" "*.mmfb.kareegor.com"
 
 #create java truststore (Look for the rootCA.pem file in - mkcert -CAROOT)
 keytool -import  -trustcacerts  -alias mmbf  -file rootCA.pem   -keystore trustStoreFile
@@ -39,5 +39,17 @@ docker build . -t kareegar/keycloak
 #nodejs commands:
 npm install -g @angular/cli
 ng new <appname>
+
+#kubernetes commands from edge/kubernetes folder
+#store certs
+kubectl create configmap config-data --from-file=traefik/traefik.yml,certs/mmfb-cert.pem,certs/mmfb-key.pem
+kubectl describe configmaps config-data
+kubectl apply -f cert-secret.yaml
+#create custom resource definition for traefik ingress controlling
+kubectl apply -f 1-traefik-crd.yaml
+#deploy Traefik with ServiceAccount, Traefik Admin Service and IngressRoute
+kubectl apply -f 2-traefik-deployment.yaml
+#Authserver deployment
+kubectl apply -f 3-keyclaok-authserver.yaml
 
 ```
