@@ -10,7 +10,8 @@ Youtube link of session 1: https://www.youtube.com/watch?v=Q8WsYyz1CEs&t=2192s
 #add hostname in /etc/hosts file
 127.0.1.1 www.mmfb.com
 127.0.1.1 traefik.mmfb.com
-
+#add hostname in /etc/hosts file if local openshift
+<clusterIP> www.mmfb.kareegor.com traefik.mmfb.kareegor.com
 # If it's the firt install of mkcert, run and generate certificates using [mkcert](https://github.com/FiloSottile/mkcert) :
 mkcert -install
 
