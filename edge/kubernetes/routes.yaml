@@ -1,0 +1,42 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: traefik
+  namespace: mmfb
+  labels:
+    app: traefik
+  annotations:
+    app: traefik
+spec:
+  host: traefik.mmfb.kareegor.com
+  to:
+    kind: Service
+    name: traefik
+    weight: 100
+  port:
+    targetPort: websecure
+  tls:
+    termination: passthrough
+    insecureEdgeTerminationPolicy: Redirect
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: default-route
+  namespace: mmfb
+  labels:
+    app: default-route
+  annotations:
+    app: default-route
+spec:
+  host: www.mmfb.kareegor.com
+  to:
+    kind: Service
+    name: traefik
+    weight: 100
+  port:
+    targetPort: websecure
+  tls:
+    termination: passthrough
+    insecureEdgeTerminationPolicy: Redirect
+

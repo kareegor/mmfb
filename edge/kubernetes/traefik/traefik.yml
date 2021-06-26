@@ -1,13 +1,3 @@
-http:
-  routers:
-    traefik:
-      rule: "Host(`www.mmfb.kareegor.com`) && PathPrefix(`/traefik`) "
-      service: "api@internal"
-      tls:
-        domains:
-          - main: "mmfb.kareegor.com"
-            sans:
-              - "*.mmfb.kareegor.com"
 tls:
   certificates:
     - certFile: "/traefik/mmfb-cert.pem"

@@ -12,7 +12,6 @@ metadata:
   labels:
     app: traefik
 spec:
-  type: LoadBalancer
   ports:
     - protocol: TCP
       name: web
@@ -35,9 +34,9 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   namespace: mmfb
-  name: traefik
+  name: traefik-deploy
   labels:
-    app: traefik
+    app: traefik-deploy
     traefik.enable: "true"
 spec:
   replicas: 1
@@ -54,7 +53,7 @@ spec:
       serviceAccountName: traefik-ingress-controller
       containers:
         - name: traefik
-          image: traefik:v2.4
+          image: traefik:v2.3
           args:
             - --api.insecure
             - --accesslog
@@ -62,15 +61,12 @@ spec:
             - --api.dashboard=true
             - --entrypoints.web.Address=:8000
             - --entrypoints.websecure.Address=:4443
+            - --providers.file.directory=/traefik
+            - --providers.file.watch=true            
             - --providers.kubernetescrd
-            - --providers.file.filename=/traefik/traefik.yml
-            - --providers.file.watch=true
           volumeMounts:
             - name: config 
-              mountPath: /traefik
-                      
-          securityContext:
-            privileged: true        
+              mountPath: /traefik                          
           ports:
             - name: web
               containerPort: 8000
@@ -82,22 +78,8 @@ spec:
         - name: config
           configMap:
             name: config-data
-            # items:
-            #   - key: traefik.yml
-            #     path: /traefik/traefik.yml
-            #   - key: mmfb-cert.pem
-            #     path: /traefik/mmfb-cert.pem   
-            #   - key: mmfb-key.pem
-            #     path: /traefik/mmfb-key.pem                                         
-      # volumes:
-      #   - name: cert
-      #     persistentVolumeClaim:
-      #       claimName: cert-volume-claim-4
-      #   - name: traefik
-      #     persistentVolumeClaim:
-      #       claimName: traefik-volume-claim-4
 status: {}
---- 
+
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
 metadata:
@@ -111,8 +93,9 @@ spec:
       kind: Rule
       services:
         - name: traefik
+          namespace: mmfb
           port: 8080
   tls:
-    -secretName: secret-tls
+    secretName: secret-tls
 
     

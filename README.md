@@ -40,16 +40,21 @@ docker build . -t kareegar/keycloak
 npm install -g @angular/cli
 ng new <appname>
 
+
+# install openshift in your laptop 
+# - https://developers.redhat.com/products/codeready-containers/overview
+# - https://www.youtube.com/watch?v=aolL9wXAya4
 #kubernetes commands from edge/kubernetes folder
 #store certs
-kubectl create configmap config-data --from-file=traefik/traefik.yml,certs/mmfb-cert.pem,certs/mmfb-key.pem
+kubectl create secret tls secret-tls --cert=certs/mmfb-cert.pem --key=certs/mmfb-key.pem
+kubectl create configmap config-data --from-file=traefik/traefik.yml,certs/
+mmfb-cert.pem,certs/mmfb-key.pem
+kubectl create configmap truststore --from-file=certs/trustStoreFile
+
 kubectl describe configmaps config-data
-kubectl apply -f cert-secret.yaml
-#create custom resource definition for traefik ingress controlling
-kubectl apply -f 1-traefik-crd.yaml
-#deploy Traefik with ServiceAccount, Traefik Admin Service and IngressRoute
-kubectl apply -f 2-traefik-deployment.yaml
-#Authserver deployment
-kubectl apply -f 3-keyclaok-authserver.yaml
+
+docker login -u kubeadmin -p $(oc whoami -t) https://io.mmfb.kareegor.com
+docker image tag frontend1:latest io.mmfb.kareegor.com/mmfb-dev-1/frontend1:latest
+docker image push io.mmfb.kareegor.com/mmfb-dev-1/frontend1:latest
 
 ```

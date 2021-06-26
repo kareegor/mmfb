@@ -8,6 +8,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.4.1
   creationTimestamp: null
   name: ingressroutes.traefik.containo.us
+  namespace: mmfb
 spec:
   group: traefik.containo.us
   names:
@@ -206,6 +207,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.4.1
   creationTimestamp: null
   name: ingressroutetcps.traefik.containo.us
+  namespace: mmfb
 spec:
   group: traefik.containo.us
   names:
@@ -366,6 +368,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.4.1
   creationTimestamp: null
   name: ingressrouteudps.traefik.containo.us
+  namespace: mmfb
 spec:
   group: traefik.containo.us
   names:
@@ -450,6 +453,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.4.1
   creationTimestamp: null
   name: middlewares.traefik.containo.us
+  namespace: mmfb
 spec:
   group: traefik.containo.us
   names:
@@ -1013,6 +1017,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.4.1
   creationTimestamp: null
   name: serverstransports.traefik.containo.us
+  namespace: mmfb
 spec:
   group: traefik.containo.us
   names:
@@ -1114,6 +1119,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.4.1
   creationTimestamp: null
   name: tlsoptions.traefik.containo.us
+  namespace: mmfb
 spec:
   group: traefik.containo.us
   names:
@@ -1201,6 +1207,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.4.1
   creationTimestamp: null
   name: tlsstores.traefik.containo.us
+  namespace: mmfb
 spec:
   group: traefik.containo.us
   names:
@@ -1265,6 +1272,7 @@ metadata:
     controller-gen.kubebuilder.io/version: v0.4.1
   creationTimestamp: null
   name: traefikservices.traefik.containo.us
+  namespace: mmfb
 spec:
   group: traefik.containo.us
   names:
@@ -1534,7 +1542,7 @@ kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: traefik-ingress-controller
-
+  namespace: mmfb
 rules:
   - apiGroups:
       - ""
@@ -1583,6 +1591,7 @@ kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: traefik-ingress-controller
+  namespace: mmfb
 
 roleRef:
   apiGroup: rbac.authorization.k8s.io

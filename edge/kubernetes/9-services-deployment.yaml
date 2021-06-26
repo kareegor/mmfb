@@ -1,0 +1,132 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: service1
+  namespace: mmfb
+  labels:
+     app: service1
+spec:
+  ports:
+    - port: 9180
+      name: web
+      targetPort: 9180
+  selector:
+    app: service1
+status:
+  loadBalancer: {}    
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  creationTimestamp: null
+  labels:
+    app: service1
+  name: service1
+  namespace: mmfb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service1
+  template:
+    metadata:
+      labels:
+        app: service1
+    spec:
+      containers:    
+      - env:
+        - name: SPRING_CLOUD_CONSUL_HOST
+          value: consul-leader
+        - name: SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS
+          value: kafka0             
+        - name: SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI
+          value: https://www.mmfb.kareegor.com/auth/realms/mmfb
+        - name: SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_JWK_SET_URI
+          value: https://www.mmfb.kareegor.com/auth/realms/mmfb/protocol/openid-connect/certs
+        - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_ID
+          value: apiclient
+        - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET
+          value: 71cb06f9-83d0-470f-bbbd-a9ac8b74ad2e
+        - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_REDIRECT_URI
+          value: https://www.mmfb.kareegor.com/app2/login/oauth2/code/{registrationId}
+        image: docker.io/mrmanna/mmfb-service1:latest
+        name: service1
+        volumeMounts:
+            - name: config 
+              mountPath: /etc/certs    
+        ports:
+              - containerPort: 9180
+                protocol: TCP
+        securityContext:
+          privileged: true        
+      volumes:
+        - name: config
+          configMap:
+            name: truststore          
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service2
+  namespace: mmfb
+  labels:
+     app: service2
+spec:
+  ports:
+    - port: 9280
+      name: web
+      targetPort: 9280
+  selector:
+    app: service2
+status:
+  loadBalancer: {}    
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  creationTimestamp: null
+  labels:
+    app: service2
+  name: service2
+  namespace: mmfb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: service2
+  template:
+    metadata:
+      labels:
+        app: service2
+    spec:
+      containers:    
+      - env:
+        - name: SPRING_CLOUD_CONSUL_HOST
+          value: consul-leader
+        - name: SPRING_CLOUD_STREAM_KAFKA_BINDER_BROKERS
+          value: kafka0         
+        - name: SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI
+          value: https://www.mmfb.kareegor.com/auth/realms/mmfb
+        - name: SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_JWK_SET_URI
+          value: https://www.mmfb.kareegor.com/auth/realms/mmfb/protocol/openid-connect/certs
+        - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_ID
+          value: apiclient
+        - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET
+          value: 71cb06f9-83d0-470f-bbbd-a9ac8b74ad2e
+        - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_REDIRECT_URI
+          value: https://www.mmfb.kareegor.com/app2/login/oauth2/code/{registrationId}
+        image:  docker.io/mrmanna/mmfb-service2:latest
+        name: service2
+        volumeMounts:
+            - name: config 
+              mountPath: /etc/certs    
+        ports:
+              - containerPort: 9280
+                protocol: TCP
+        securityContext:
+          privileged: true        
+      volumes:
+        - name: config
+          configMap:
+            name: truststore          
+ 

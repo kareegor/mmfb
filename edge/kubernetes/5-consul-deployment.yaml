@@ -75,58 +75,58 @@ spec:
         persistentVolumeClaim:
           claimName: consul-data-leader
 status: {}
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  annotations:
-    app: consul-replica
-  creationTimestamp: null
-  labels:
-    app: consul-replica
-  name: consul-replica
-spec:
-  replicas: 2
-  selector:
-    matchLabels:
-      app: consul-replica
-  strategy:
-    type: Recreate
-  template:
-    metadata:
-      annotations:
-        app: consul-replica
-      creationTimestamp: null
-      labels:
-        app: consul-replica
-    spec:
-      containers:
-      - args:
-        - agent
-        - -server
-        - -client=0.0.0.0
-        - -retry-join=consul-leader
-        env:
-        - name: CONSUL_BIND_INTERFACE
-          value: eth0
-        - name: CONSUL_LOCAL_CONFIG
-          value: '{"leave_on_terminate": true}'
-        image: consul
-        imagePullPolicy: ""
-        name: consul-replica
-        resources: {}
-        volumeMounts:
-        - mountPath: /consul/data
-          name: consul-data-replica
-        securityContext:
-          privileged: true   
-      restartPolicy: Always
-      serviceAccountName: "traefik-ingress-controller"
-      volumes:
-      - name: consul-data-replica
-        persistentVolumeClaim:
-          claimName: consul-data-replica
-status: {}
+# ---
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   annotations:
+#     app: consul-replica
+#   creationTimestamp: null
+#   labels:
+#     app: consul-replica
+#   name: consul-replica
+# spec:
+#   replicas: 2
+#   selector:
+#     matchLabels:
+#       app: consul-replica
+#   strategy:
+#     type: Recreate
+#   template:
+#     metadata:
+#       annotations:
+#         app: consul-replica
+#       creationTimestamp: null
+#       labels:
+#         app: consul-replica
+#     spec:
+#       containers:
+#       - args:
+#         - agent
+#         - -server
+#         - -client=0.0.0.0
+#         - -retry-join=consul-leader
+#         env:
+#         - name: CONSUL_BIND_INTERFACE
+#           value: eth0
+#         - name: CONSUL_LOCAL_CONFIG
+#           value: '{"leave_on_terminate": true}'
+#         image: consul
+#         imagePullPolicy: ""
+#         name: consul-replica
+#         resources: {}
+#         volumeMounts:
+#         - mountPath: /consul/data
+#           name: consul-data-replica
+#         securityContext:
+#           privileged: true   
+#       restartPolicy: Always
+#       serviceAccountName: "traefik-ingress-controller"
+#       volumes:
+#       - name: consul-data-replica
+#         persistentVolumeClaim:
+#           claimName: consul-data-replica
+# status: {}
 ---            
 apiVersion: traefik.containo.us/v1alpha1
 kind: IngressRoute
@@ -143,4 +143,4 @@ spec:
           - name: consul-leader
             port: 8500
   tls:
-    -secretName: secret-tls    
+    secretName: secret-tls    

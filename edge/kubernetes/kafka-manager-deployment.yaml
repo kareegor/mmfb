@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: /snap/kompose/19/kompose-linux-amd64 convert -f kafka.yml
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: kafka-manager
+    traefik.constraint-label: traefik-public
+    traefik.docker.network: traefik-public
+    traefik.enable: "true"
+    traefik.http.middlewares.kafkaman.headers.contentsecuritypolicy: upgrade-insecure-requests
+    traefik.http.middlewares.kafkaman.headers.framedeny: "false"
+    traefik.http.middlewares.kafkaman.headers.sslproxyheaders.x-forwarded-proto: https
+    traefik.http.middlewares.kafkaman.headers.sslredirect: "true"
+    traefik.http.routers.kafkaman.middlewares: kafkaman
+    traefik.http.routers.kafkaman.rule: Host(`kafkaman.mmfb.com`)
+    traefik.http.routers.kafkaman.tls: "true"
+    traefik.http.services.kafkaman.loadbalancer.passhostheader: "true"
+    traefik.http.services.kafkaman.loadbalancer.server.port: "9000"
+    traefik.http.services.kafkaman.loadbalancer.sticky.cookie: "true"
+    traefik.http.services.kafkaman.loadbalancer.sticky.cookie.name: kafkaman
+  name: kafka-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: kafka-manager
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: /snap/kompose/19/kompose-linux-amd64 convert -f kafka.yml
+        kompose.version: 1.21.0 (992df58d8)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/traefik-public: "true"
+        io.kompose.service: kafka-manager
+    spec:
+      containers:
+      - env:
+        - name: APPLICATION_SECRET
+          value: letmein
+        - name: KM_ARGS
+          value: -Djava.net.preferIPv4Stack=true
+        - name: ZK_HOSTS
+          value: zookeeper:2181
+        image: sheepkiller/kafka-manager:latest
+        imagePullPolicy: ""
+        name: kafka-manager
+        resources: {}
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes: null
+status: {}

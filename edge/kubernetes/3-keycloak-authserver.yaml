@@ -90,4 +90,4 @@ spec:
           - name: auth
             port: 8080
   tls:
-    -secretName: secret-tls          
+   secretName: secret-tls          

@@ -1,0 +1,80 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend1
+  namespace: mmfb
+  labels:
+     app: frontend1
+spec:
+  ports:
+    - port: 8480
+      name: web
+      targetPort: 8480
+  selector:
+    app: frontend1
+status:
+  loadBalancer: {}    
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  creationTimestamp: null
+  labels:
+    app: frontend1
+  name: frontend1
+  namespace: mmfb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend1
+  template:
+    metadata:
+      labels:
+        app: frontend1 
+    spec:
+      containers:    
+      - env:
+        - name: SPRING_CLOUD_CONSUL_HOST
+          value: consul-leader
+        - name: SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_ISSUER_URI
+          value: https://www.mmfb.kareegor.com/auth/realms/mmfb
+        - name: SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_OIDC_JWK_SET_URI
+          value: https://www.mmfb.kareegor.com/auth/realms/mmfb/protocol/openid-connect/certs
+        - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_ID
+          value: apiclient
+        - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_CLIENT_SECRET
+          value: 71cb06f9-83d0-470f-bbbd-a9ac8b74ad2e
+        - name: SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_OIDC_REDIRECT_URI
+          value: https://www.mmfb.kareegor.com/app1/login/oauth2/code/{registrationId}
+        image: docker.io/mrmanna/mmfb-frontend1:latest
+        name: frontend1
+        volumeMounts:
+            - name: config 
+              mountPath: /etc/certs    
+        ports:
+              - containerPort: 8480
+                protocol: TCP
+        securityContext:
+          privileged: true        
+      volumes:
+        - name: config
+          configMap:
+            name: truststore          
+---            
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: frontend1-route
+  namespace: mmfb
+spec:
+  entryPoints:
+      - websecure
+  routes:
+      - match: Host(`www.mmfb.kareegor.com`) && PathPrefix(`/app1`)
+        kind: Rule
+        services:
+          - name: frontend1
+            port: 8480
+  tls:
+   secretName: secret-tls   
