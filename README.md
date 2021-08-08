@@ -1,9 +1,9 @@
 # mmfb
 multi micro frontends and backends
 We are not providing a proper Readme now to build from scratch.
-To do it better yourself we highly recommend you to join the sessions of bootcamp: https://beacloudpro.com/bootcamps/bootcamp_book
+There are total 5 sessions to build a Cloud Agnostic Microservice Ecosystem with Spring boot, Zuul2, Consul, Traefik, Keycloak, Kafka, Angular, Prometheus, Grafana which will work in single node mode, docker swarm mode and in kubernetes of any provider. 
+You can get all sessions list here: https://www.linkedin.com/pulse/cloud-agnostic-microfrontends-microservices-architecture-kareegor 
 
-Youtube link of session 1: https://www.youtube.com/watch?v=Q8WsYyz1CEs&t=2192s
 
 ```bash
 # below are some frequently required commands 
